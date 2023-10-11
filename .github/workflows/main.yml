@@ -1,0 +1,48 @@
+name: lint and test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run lint
+        run: bundle exec rubocop .
+      - name: Run tests
+        run: bundle exec rspec spec
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          rubygems: latest
+      - env:
+          GEM_HOST_API_KEY: ${{ secrets.ALPHAGOV_RUBYGEMS_API_KEY }}
+        run: |
+          VERSION=$(ruby -e "puts eval(File.read('govwifi_eapoltest.gemspec')).version")
+          GEM_VERSION=$(gem list --exact --remote govwifi_eapoltest)
+          
+          if [ "${GEM_VERSION}" != "govwifi_eapoltest (${VERSION})" ]; then
+            gem build govwifi_eapoltest.gemspec
+            gem push "govwifi_eapoltest-${VERSION}.gem"
+          fi
+          
+          if ! git ls-remote --tags --exit-code origin v${VERSION}; then
+            git tag v${VERSION}
+            git push --tags
+          fi
