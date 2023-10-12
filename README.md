@@ -22,7 +22,7 @@ The output is an array with the contents of the output of the Eapol_test command
                 
 ## Matchers
 
-The gem also provides a set of RSpec matchers to make facilitate testing.
+The gem also provides a set of RSpec matchers to facilitate testing.
 
 ```ruby
 expect(output).to use_tls_version_1_0
