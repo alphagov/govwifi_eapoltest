@@ -1,6 +1,6 @@
 ## [Unreleased]
 
-## []
+## [0.2.0] - 2023-10-17
 - Validating the server certificate is now optional
 
 ## [0.1.0] - 2023-09-20
