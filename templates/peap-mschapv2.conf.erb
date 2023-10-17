@@ -7,5 +7,7 @@ network={
   password="<%= password %>"
   phase1="<%= phase1 %>"
   phase2="autheap=MSCHAPV2"
+<% unless server_cert_path.nil? -%>
   ca_cert="<%= server_cert_path %>"
+<% end -%>
 }

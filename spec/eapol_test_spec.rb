@@ -34,6 +34,11 @@ describe GovwifiEapoltest do
       expect(fake_eapol_test.config_file).to include('ssid="GovWifi"')
       expect(fake_eapol_test.config_file).to include('identity="user"')
       expect(fake_eapol_test.config_file).to include('password="pass"')
+      expect(fake_eapol_test.config_file).to include('ca_cert="/path/to/server_cert.pem"')
+    end
+    it "removes the ca_path directive" do
+      eapol_test.run_peap_mschapv2(username:, password:)
+      expect(fake_eapol_test.config_file).to_not include("ca_cert")
     end
     it "runs eapol_test twice, with both radius ips" do
       eapol_test.run_peap_mschapv2(server_cert_path:, username: "user", password:)
@@ -101,6 +106,10 @@ describe GovwifiEapoltest do
       expect(fake_eapol_test.config_file).to include('ca_cert="/path/to/server_cert.pem"')
       expect(fake_eapol_test.config_file).to include('client_cert="/path/to/client_cert.pem"')
       expect(fake_eapol_test.config_file).to include('private_key="/path/to/client_key.pem"')
+    end
+    it "removes the ca_path directive" do
+      eapol_test.run_eap_tls(client_cert_path:, client_key_path:)
+      expect(fake_eapol_test.config_file).to_not include("ca_cert")
     end
     it "runs eapol_test twice, with both radius ips" do
       eapol_test.run_eap_tls(server_cert_path:, client_cert_path:, client_key_path:)
