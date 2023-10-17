@@ -15,7 +15,7 @@ class GovwifiEapoltest
     @secret = secret
   end
 
-  def run_peap_mschapv2(server_cert_path:, username:, password:, tls_version: :tls1_2)
+  def run_peap_mschapv2(username:, password:, server_cert_path: nil, tls_version: :tls1_2)
     raise "Unknown TLS version #{tls_version}" unless %i[tls1_0 tls1_1 tls1_2 tls1_3].include?(tls_version)
 
     phase1_tls1_0 = "tls_disable_tlsv1_0=#{tls_version == :tls1_0 ? 0 : 1}"
@@ -36,7 +36,7 @@ class GovwifiEapoltest
     run_eapol(PEAP_MSCHAP_TEMPLATE_PATH, variables:)
   end
 
-  def run_eap_tls(server_cert_path:, client_cert_path:, client_key_path:)
+  def run_eap_tls(client_cert_path:, client_key_path:, server_cert_path: nil)
     variables = {
       server_cert_path:,
       client_cert_path:,
@@ -50,7 +50,7 @@ private
 
   def run_eapol(config_template_path, variables: {})
     file = Tempfile.new
-    file.write ERB.new(File.read(config_template_path)).result_with_hash(variables)
+    file.write ERB.new(File.read(config_template_path), trim_mode: "-").result_with_hash(variables)
     file.close
     @radius_ips.map do |radius_ip|
       Services.eapol_test.run(config_file_path: file.path, radius_ip:, secret: @secret)

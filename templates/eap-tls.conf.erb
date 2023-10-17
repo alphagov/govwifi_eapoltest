@@ -2,7 +2,9 @@ network={
   key_mgmt=WPA-EAP
   eap=TLS
   anonymous_identity="test@client.org"
-  ca_cert="<%= server_cert_path %>"
   client_cert="<%= client_cert_path %>"
   private_key="<%= client_key_path %>"
+<% unless server_cert_path.nil? -%>
+  ca_cert="<%= server_cert_path %>"
+<% end -%>
 }
