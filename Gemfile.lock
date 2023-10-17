@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    govwifi_eapoltest (0.1.0)
+    govwifi_eapoltest (0.2.0)
       rspec
 
 GEM
